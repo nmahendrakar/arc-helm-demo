@@ -15,9 +15,15 @@ jobs:
     - name: Azure CLI
       run: |
         az webapp list --query "[?state=='Running']"
-    - name: Azure PowerShell
-      uses: azure/powershell@v1
-      with:
-        azPSVersion: 'latest'
-        inlineScript: |
-          Get-AzVM
+        terraformstoragerg=RGtftate
+        terraformstorageaccount=tfstate$RANDOM
+        terraformcontainer=tfstate
+        az group create --location eastus --name $terraformstoragerg
+        az storage account create -n $terraformstorageaccount -g $terraformstoragerg --location eastus --sku Standard_LRS
+        ACCOUNT_KEY=$(az storage account keys list --resource-group $terraformstoragerg --account-name $terraformstorageaccount --query [0].value -o tsv)
+        az storage container create -n $terraformcontainer --account-name $terraformstorageaccount
+        echo "resource_group_name: $terraformstoragerg"
+        echo "storage_account_name: $terraformstorageaccount"
+        echo "container_name: $terraformcontainer"
+        echo "access_key: $ACCOUNT_KEY"
+    
