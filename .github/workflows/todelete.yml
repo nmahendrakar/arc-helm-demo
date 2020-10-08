@@ -6,12 +6,18 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    – name: Azure Login
+    - name: Azure Login
       uses: azure/login@v1.1
       with:
         creds: ${{secrets.AZURE_CREDENTIALS}}
         enable-AzPSSession: true
         
-    – name: Azure CLI
+    - name: Azure CLI
       run: |
-        az webapp list –query "[?state=='Running']"
+        az webapp list --query "[?state=='Running']"
+    - name: Azure PowerShell
+      uses: azure/powershell@v1
+      with:
+        azPSVersion: 'latest'
+        inlineScript: |
+          Get-AzVM
